@@ -27,6 +27,12 @@ const (
 	maxMessageSize = 1000
 )
 
+func (client *Client) disconnect() {
+	client.wsServer.unregister <- client
+	close(client.send)
+	client.conn.Close()
+}
+
 func (client *Client) readPump() {
 
 	defer func() {
@@ -58,8 +64,3 @@ func (client *Client) readPump() {
 // Upon receiving new messages the client will push them in the WsServer
 // broadcast channel.
 
-func (client *Client) disconnect() {
-	client.wsServer.unregister <- client
-	close(client.send)
-	client.conn.Close()
-}
